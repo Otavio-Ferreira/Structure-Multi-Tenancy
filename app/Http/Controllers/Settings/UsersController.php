@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Events\Autenticator\UserCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\StoreRequest;
+use App\Http\Requests\Users\UpdateRequest;
 use App\Models\User;
 use App\Repositories\Authentication\LoginRepository;
 use App\Repositories\Settings\Roles\RolesRepository;
@@ -45,12 +46,14 @@ class UsersController extends Controller
 
             $data = $this->loginRepository->createToken($user, "first_access");
 
+            $domain = tenant() ? tenant_route_url('login/registrar/' .$data['token']) : route('login.register', $data['token']) ;
             UserCreated::dispatch(
                 $data['name'],
                 $data['email'],
                 $data['time'],
                 $data['token'],
                 $data['title'],
+                $domain,
             );
 
             return redirect()->back()->with("toast_success", "Usuário inserido, peça-o para verificar o email para cadastrar uma senha.");
@@ -59,25 +62,25 @@ class UsersController extends Controller
         }
     }
 
-    // public function update(UpdateRequest $request, $id)
-    // {
-    //     try {
-    //         $user = User::findOrFail($id);
+    public function update(UpdateRequest $request, $id)
+    {
+        try {
+            $user = User::findOrFail($id);
 
-    //         $user->name = $request->name;
-    //         $user->status = $request->status;
+            $user->name = $request->name;
+            $user->status = $request->status;
 
-    //         $user->save();
+            $user->save();
 
-    //         if ($request->role) {
-    //             $user->syncRoles([$request->role]);
-    //         }
+            if ($request->role) {
+                $user->syncRoles([$request->role]);
+            }
 
-    //         return redirect()->back()->with('toast_success', 'Usuário atualizado com sucesso.');
-    //     } catch (\Throwable $th) {
-    //         return redirect()->back()->with('toast_error', 'Erro ao atualizar usuário, tente novamente em alguns instantes');
-    //     }
-    // }
+            return redirect()->back()->with('toast_success', 'Usuário atualizado com sucesso.');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('toast_error', 'Erro ao atualizar usuário, tente novamente em alguns instantes');
+        }
+    }
 
     public function destroy($id)
     {
@@ -92,6 +95,6 @@ class UsersController extends Controller
     public function logout()
     {
         Auth::logout();
-        return to_route('login');
+        return tenant() ? redirect()->to(tenant_route_url('login')) : to_route('login');
     }
 }

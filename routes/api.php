@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Tenants\TenantApps;
+use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +19,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::get('getApps', function (Request $request) {
+    $apps = TenantApps::where("tenants_id", $request->tenants_id)->get();
+    return response()->json($apps);
 });
 
 Route::post('login', function (Request $request) {

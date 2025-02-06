@@ -31,7 +31,8 @@ class EmailToResetPassword implements ShouldQueue
             $event->email,
             $event->time,
             $event->token,
-            $event->title
+            $event->title,
+            $event->domain
         );
         Mail::to($user)->send($email);
 

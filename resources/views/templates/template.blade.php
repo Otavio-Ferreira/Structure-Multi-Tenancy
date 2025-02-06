@@ -10,12 +10,12 @@
 
     @yield('styles')
 
-    <link href="{{ asset('assets/css/tabler-icons.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/tabler.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/tabler-payments.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/tabler-vendors.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('assets/css/demo.min.css') }}" rel="stylesheet" />
-    <link rel="shortcut icon" href="{{asset('assets/img/illustrations/logo-small.svg')}}" type="image/x-icon">
+    <link href="{{ global_asset('assets/css/tabler-icons.min.css') }}" rel="stylesheet" />
+    <link href="{{ global_asset('assets/css/tabler.min.css') }}" rel="stylesheet" />
+    <link href="{{ global_asset('assets/css/tabler-payments.min.css') }}" rel="stylesheet" />
+    <link href="{{ global_asset('assets/css/tabler-vendors.min.css') }}" rel="stylesheet" />
+    <link href="{{ global_asset('assets/css/demo.min.css') }}" rel="stylesheet" />
+    <link rel="shortcut icon" href="{{global_asset('assets/img/illustrations/logo-small.svg')}}" type="image/x-icon">
 
 
     <style>
@@ -42,7 +42,7 @@
                 </button>
                 <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
                     <a href="/dashboard">
-                        <img src="{{ asset('assets/img/illustrations/logo.svg') }}" width="110" height="32" alt="tabler" class="navbar-brand-image">
+                        <img src="{{ global_asset('assets/img/illustrations/logo.svg') }}" width="110" height="32" alt="tabler" class="navbar-brand-image">
                     </a>
                 </h1>
                 <div class="navbar-nav flex-row order-md-last">
@@ -65,7 +65,7 @@
                             </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                            <a href="{{route('logout')}}" class="dropdown-item">Sair</a>
+                            <a href="{{ tenant() ? tenant_route_url('users/sair') : route('logout')}}" class="dropdown-item">Sair</a>
                         </div>
                     </div>
                 </div>
@@ -76,46 +76,17 @@
                 <div class="navbar">
                     <div class="container-xl">
                         <ul class="navbar-nav">
-                            <x-navbar.navbar-item route="{{route('home.index')}}" title="Dashboard" isActive="{{request()->routeIs(['home.*']) ? true : false}}" icon="ti-chart-bar">
+                            <x-navbar.navbar-item route="{{tenant() ? tenant_route_url('dashboard') : route('home.index') }}" title="Dashboard" isActive="{{request()->routeIs(['home.*']) ? true : false}}" icon="ti-chart-bar">
                             </x-navbar.navbar-item>
-
-                            @canany(['adicionar_obras', 'ver_obras'])
-                                <x-navbar.navbar-item route="" title="Obras" isActive="{{request()->routeIs(['construction.*', 'evolution.*','costs.*']) ? true : false}}" icon="ti-crane">
-                                    <x-slot:links>
-                                        @can('adicionar_obras')
-                                        <a class="dropdown-item" href="{{route('construction.create')}}">Adicionar</a>
-                                        @endcan
-                                        @can('ver_obras')
-                                        <a class="dropdown-item" href="{{route('construction.index')}}">Ver obras</a>
-                                        @endcan
-                                    </x-slot:links>
-                                </x-navbar.navbar-item>
-                            @endcanany
-                            
-                            @canany(['adicionar_templates', 'adicionar_categoria_de_despesas', 'adicionar_fornecedores'])
-                                <x-navbar.navbar-item route="" title="Cadastros" isActive="{{request()->routeIs(['templates.*', 'suppliers.*','expense.*']) ? true : false}}" icon="ti-clipboard-text">
-                                    <x-slot:links>
-                                        @can('adicionar_templates')
-                                            <a class="dropdown-item" href="{{route('templates.index')}}">Templates</a>
-                                        @endcan
-                                        @can('adicionar_categoria_de_despesas')
-                                            <a class="dropdown-item" href="{{route('suppliers.index')}}">Fornecedores</a>
-                                        @endcan
-                                        @can('adicionar_fornecedores')
-                                            <a class="dropdown-item" href="{{route('expense.index')}}">Cat. Despesas</a>
-                                        @endcan
-                                    </x-slot:links>
-                                </x-navbar.navbar-item>
-                            @endcanany
                             
                             @canany(['adicionar_usuário', 'adicionar_grupo', 'adicionar_permissões'])
                                 <x-navbar.navbar-item route="" title="Configurações" isActive="{{request()->routeIs(['users.*', 'roles.*','permissions.*']) ? true : false}}" icon="ti-settings">
                                     <x-slot:links>
                                         @can('adicionar_usuário')
-                                        <a class="dropdown-item" href="{{route('users.index')}}">Usuários</a>
+                                        <a class="dropdown-item" href="{{tenant() ? tenant_route_url('usuarios') : route('users.index') }}">Usuários</a>
                                         @endcan
                                         @can('adicionar_grupo')
-                                        <a class="dropdown-item" href="{{route('roles.index')}}">Grupos</a>
+                                        <a class="dropdown-item" href="{{tenant() ? tenant_route_url('grupos') : route('roles.index') }}">Grupos</a>
                                         @endcan
                                     </x-slot:links>
                                 </x-navbar.navbar-item>
@@ -170,10 +141,10 @@
         </div>
     </div>
 
-    <script src="{{ asset('assets/js/jquery-3.5.1.js') }}"></script>
-    <script src="{{ asset('assets/js/echarts.min.js') }}"></script>
-    <script src="{{ asset('assets/js/tabler.min.js?1684106062') }}" defer></script>
-    <script src="{{ asset('assets/js/demo.min.js?1684106062') }}" defer></script>
+    <script src="{{ global_asset('assets/js/jquery-3.5.1.js') }}"></script>
+    <script src="{{ global_asset('assets/js/echarts.min.js') }}"></script>
+    <script src="{{ global_asset('assets/js/tabler.min.js?1684106062') }}" defer></script>
+    <script src="{{ global_asset('assets/js/demo.min.js?1684106062') }}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     {{-- <script src="{{ asset('assets/libs/apexcharts/dist/apexcharts.min.js') }}"></script> --}}

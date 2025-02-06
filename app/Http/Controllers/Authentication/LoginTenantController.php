@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Authentication;
 
 use App\Events\Autenticator\TokenCreated;
 use App\Http\Controllers\Controller;
-use App\Http\Middleware\Autenticator;
 use App\Http\Requests\Authentication\ResetRequest;
 use App\Http\Requests\Authentication\SendRequest;
 use App\Models\Authentication\Tokens;
@@ -12,9 +11,8 @@ use App\Models\User;
 use App\Repositories\Authentication\LoginRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
-class LoginController extends Controller
+class LoginTenantController extends Controller
 {
     public $repository;
 
@@ -25,7 +23,7 @@ class LoginController extends Controller
 
     public function index()
     {
-        return view('pages.authentication.index');
+        return view('tenants.pages.authentication.index');
     }
 
     public function store(Request $request)
@@ -36,7 +34,7 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
 
             if (Auth::user()->status == 1) {
-                return redirect()->route('home.index');
+                return redirect()->to('http://' . tenant()->domain->domain . ':8000/dashboard');
             } else {
                 Auth::logout();
                 return back()->with("toast_error", "verifique se o email e senha foram digitados corretamente.")->withInput();
@@ -48,16 +46,16 @@ class LoginController extends Controller
 
     public function reset()
     {
-        return view('pages.authentication.reset');
+        return view('tenants.pages.authentication.reset');
     }
 
     public function edit(Tokens $token)
     {
         if (isset($token) && $token->status == 1) {
-            return view('pages.authentication.edit')->with('token_id', $token->id);
+            return view('tenants.pages.authentication.edit')->with('token_id', $token->id);
         }
 
-        return to_route('login');
+        return redirect()->to(tenant_route_url('login'));
     }
 
     public function send(SendRequest $request)
@@ -68,14 +66,14 @@ class LoginController extends Controller
             try {
 
                 $data = $this->repository->createToken($user, "reset_password");
-                
+                $domain = tenant() ? tenant_route_url('login/editar/' .$data['token']) : route('login.edit');
                 TokenCreated::dispatch(
                     $data['name'],
                     $data['email'],
                     $data['time'],
                     $data['token'],
                     $data['title'],
-                    route('login.edit', $data['token']),
+                    $domain,
                 );
 
                 return redirect()->back()->with("toast_success", "Verifique a caixa de entrada do seu email.");
@@ -93,7 +91,7 @@ class LoginController extends Controller
             try {
                 $this->repository->changePassword($request, $token);
 
-                return to_route('login')->with("toast_success", "Senha atualizada, tente fazer login.");
+                return redirect()->to(tenant_route_url('login'))->with("toast_success", "Senha atualizada, tente fazer login.");
             } catch (\Throwable $th) {
                 return redirect()->back()->with("toast_error", "Erro, tente novamente em alguns instantes.")->withInput();
             }
@@ -105,9 +103,9 @@ class LoginController extends Controller
     public function register(Tokens $token)
     {
         if (isset($token) && $token->status == 1) {
-            return view('pages.authentication.register')->with('token_id', $token->id);
+            return view('tenants.pages.authentication.register')->with('token_id', $token->id);
         }
 
-        return to_route('login');
+        return redirect()->to(tenant_route_url('login'));
     }
 }

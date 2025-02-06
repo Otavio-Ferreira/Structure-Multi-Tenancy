@@ -21,10 +21,9 @@
               <i class="icon ti ti-user-plus"></i>
               Adicionar usuário
             </a>
-            <x-modal.modal route="{{ tenant() ? tenant_route_url('usuarios/adicionar') : route('users.store') }}"
-              id="modal-add-user" class="modal-dialog-centered" title="Adicionar usuário" typeBtnClose="button"
-              classBtnClose="me-auto" textBtnClose="Cancelar" typeBtnSave="submit" classBtnSave="btn-primary"
-              textBtnSave="Salvar">
+            <x-modal.modal route="{{tenant_route_url('usuarios/adicionar')}}" id="modal-add-user" class="modal-dialog-centered"
+              title="Adicionar usuário" typeBtnClose="button" classBtnClose="me-auto" textBtnClose="Cancelar"
+              typeBtnSave="submit" classBtnSave="btn-primary" textBtnSave="Salvar">
               <x-slot:content>
                 @include('components.form-elements.input.input', [
                     'title' => 'Nome',
@@ -42,14 +41,7 @@
                     'required' => 'true',
                     'placeholder' => 'Digite o email do usuário',
                 ])
-                <x-form-elements.select.select title="Grupo de permissões" id="role" name="role">
-                  <x-slot:options>
-                    <option value="" selected>Selecione</option>
-                    @foreach ($roles as $role)
-                      <option value="{{ $role->name }}">{{ $role->name }}</option>
-                    @endforeach
-                  </x-slot:options>
-                </x-form-elements.select.select>
+                
               </x-slot:content>
             </x-modal.modal>
           </div>
@@ -85,11 +77,9 @@
                 <td>
                   <button class="btn btn-secondary" data-bs-toggle="modal"
                     data-bs-target="#modal-edit-user{{ $user->id }}"><i class="ti ti-edit"></i></button>
-                  <x-modal.modal
-                    route="{{ tenant() ? tenant_route_url('usuarios/atualizar/'.$user->id) : route('users.update', $user->id) }}"
-                    id="modal-edit-user{{ $user->id }}" class="modal-dialog-centered" title="Editar usuário"
-                    typeBtnClose="button" classBtnClose="me-auto" textBtnClose="Cancelar" typeBtnSave="submit"
-                    classBtnSave="btn-primary" textBtnSave="Salvar">
+                  <x-modal.modal route="{{ route('users.update', $user->id) }}" id="modal-edit-user{{ $user->id }}"
+                    class="modal-dialog-centered" title="Editar usuário" typeBtnClose="button" classBtnClose="me-auto"
+                    textBtnClose="Cancelar" typeBtnSave="submit" classBtnSave="btn-primary" textBtnSave="Salvar">
                     <x-slot:content>
                       @include('components.form-elements.input.input', [
                           'title' => 'Nome',
@@ -102,8 +92,8 @@
 
                       <x-form-elements.select.select title="Status" id="status" name="status">
                         <x-slot:options>
-                          <option value="1" {{ $user->status == 1 ? 'selected' : '' }}>Ativo</option>
-                          <option value="0" {{ $user->status == 0 ? 'selected' : '' }}>Inativo</option>
+                          <option value="1" {{ $user->STATUS == 1 ? 'selected' : '' }}>Ativo</option>
+                          <option value="0" {{ $user->STATUS == 0 ? 'selected' : '' }}>Inativo</option>
                         </x-slot:options>
                       </x-form-elements.select.select>
 
@@ -123,7 +113,7 @@
                   <button class="btn btn-danger" data-bs-toggle="modal"
                     data-bs-target="#modal-delete-user{{ $user->id }}"><i class="ti ti-trash"></i></button>
 
-                  <x-modal.modal-alert route="{{ tenant() ? tenant_route_url('usuarios/deletar/'.$user->id) : route('users.destroy', $user->id) }}"
+                  <x-modal.modal-alert route="{{ route('users.destroy', $user->id) }}"
                     id="modal-delete-user{{ $user->id }}" class="modal-dialog-centered modal-sm"
                     background="bg-danger" classBody="text-center py-4" title="Excluír usuário" typeBtnClose="button"
                     classBtnClose="me-auto w-100" textBtnClose="Cancelar" typeBtnSave="submit"

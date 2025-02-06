@@ -19,7 +19,7 @@
               <i class="icon ti ti-plus"></i>
               Adicionar grupo
             </a>
-            <x-modal.modal route="{{ tenant() ? tenant_route_url('grupos/adicionar') : route('roles.store') }}" id="modal-add-role" class="modal-dialog-centered"
+            <x-modal.modal route="{{ route('roles.store') }}" id="modal-add-role" class="modal-dialog-centered"
               title="Adicionar grupo" typeBtnClose="button" classBtnClose="me-auto" textBtnClose="Cancelar"
               typeBtnSave="submit" classBtnSave="btn-primary" textBtnSave="Salvar">
               <x-slot:content>
@@ -79,7 +79,7 @@
                 <td>
                   <button class="btn " data-bs-toggle="modal"
                     data-bs-target="#modal-edit-role{{ $role->id }}">Editar</button>
-                  <x-modal.modal route="{{ tenant() ? tenant_route_url('grupos/atualizar/'. $role->id) : route('roles.update', $role->id) }}" id="modal-edit-role{{ $role->id }}"
+                  <x-modal.modal route="{{ route('roles.update', $role->id) }}" id="modal-edit-role{{ $role->id }}"
                     class="modal-dialog-centered" title="Editar grupo" typeBtnClose="button" classBtnClose="me-auto"
                     textBtnClose="Cancelar" typeBtnSave="submit" classBtnSave="btn-primary" textBtnSave="Salvar">
                     <x-slot:content>

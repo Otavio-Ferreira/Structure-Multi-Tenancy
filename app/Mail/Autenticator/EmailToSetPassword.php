@@ -21,7 +21,8 @@ class EmailToSetPassword extends Mailable
         public readonly string $email,
         public readonly string $time,
         public readonly string $token,
-        public readonly string $title
+        public readonly string $title,
+        public readonly string $domain
     )
     {
         //

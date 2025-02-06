@@ -10,7 +10,7 @@
     <div class="card card-md bg-transparent shadow-none border-0">
       <div class="card-body">
         <h2 class="h2 text-center mb-4">Primeiro acesso</h2>
-        <form action="{{route('login.update', $token_id)}}" method="post" autocomplete="off" novalidate>
+        <form action="{{'http://' . tenant()->domain->domain . ':8000/login/atualizar/' . $token_id}}" method="post" autocomplete="off" novalidate>
           @csrf
           <div class="mb-3">
             <label class="form-label">
@@ -45,7 +45,7 @@
       </div>
     </div>
     <div class="text-center text-muted mt-3">
-      Desenvolvido por <a href="" tabindex="-1">Araripe Softwares</a>
+      Desenvolvido por <a href="" tabindex="-1">Otavio Ferreira</a>
     </div>
   </div>
 </div>

@@ -15,13 +15,13 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <title>Multi-Tenancy</title>
   <!-- CSS files -->
-  <link href="{{ asset('assets/css/tabler.min.css?1684106062') }}" rel="stylesheet" />
-  <link href="{{ asset('assets/css/tabler-flags.min.css?1684106062') }}" rel="stylesheet" />
-  <link href="{{ asset('assets/css/tabler-payments.min.css?1684106062') }}" rel="stylesheet" />
-  <link href="{{ asset('assets/css/tabler-vendors.min.css?1684106062') }}" rel="stylesheet" />
-  <link href="{{ asset('assets/css/demo.min.css?1684106062') }}" rel="stylesheet" />
+  <link href="{{ global_asset('assets/css/tabler.min.css?1684106062') }}" rel="stylesheet" />
+  <link href="{{ global_asset('assets/css/tabler-flags.min.css?1684106062') }}" rel="stylesheet" />
+  <link href="{{ global_asset('assets/css/tabler-payments.min.css?1684106062') }}" rel="stylesheet" />
+  <link href="{{ global_asset('assets/css/tabler-vendors.min.css?1684106062') }}" rel="stylesheet" />
+  <link href="{{ global_asset('assets/css/demo.min.css?1684106062') }}" rel="stylesheet" />
   <link rel="shortcut icon" href="{{ asset('assets/img/illustrations/logo-small.svg') }}" type="image/x-icon">
-  <link href="{{ asset('assets/css/tabler-icons.min.css') }}" rel="stylesheet" />
+  <link href="{{ global_asset('assets/css/tabler-icons.min.css') }}" rel="stylesheet" />
 
   <style>
     @import url('https://rsms.me/inter/inter.css');
@@ -38,19 +38,19 @@
 
 <body class="row m-0 p-0 vh-100">
   <div class="d-none d-lg-flex col-6 flex-wrap justify-content-center align-content-center bg-primary bg-gradient">
-    <img src="{{ asset('assets/img/illustrations/login.svg') }}" class="w-75" alt="">
+    <img src="{{ global_asset('assets/img/illustrations/login.svg') }}" class="w-75" alt="">
   </div>
   <div class="col-12 col-lg-6 bg-white">
     @yield('content')
   </div>
 
-  <script src="{{ asset('assets/js/demo-theme.min.js?1684106062') }}"></script>
-  <script src="{{ asset('assets/js/jquery-3.5.1.js') }}"></script>
+  <script src="{{ global_asset('assets/js/demo-theme.min.js?1684106062') }}"></script>
+  <script src="{{ global_asset('assets/js/jquery-3.5.1.js') }}"></script>
 
-  <script src="{{ asset('assets/js/tabler.min.js?1684106062') }}" defer></script>
-  <script src="{{ asset('assets/js/demo.min.js?1684106062') }}" defer></script>
-  <script src="{{ asset('assets/js/jquery-3.5.1.js') }}"></script>
-  <script src="{{ asset('assets/js/sweetalert2.all.min.js') }}"></script>
+  <script src="{{ global_asset('assets/js/tabler.min.js?1684106062') }}" defer></script>
+  <script src="{{ global_asset('assets/js/demo.min.js?1684106062') }}" defer></script>
+  <script src="{{ global_asset('assets/js/jquery-3.5.1.js') }}"></script>
+  <script src="{{ global_asset('assets/js/sweetalert2.all.min.js') }}"></script>
   <script>
     function change(id) {
       const input = document.getElementById(id);

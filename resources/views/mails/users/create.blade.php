@@ -81,7 +81,7 @@
     <hr>
     <p>Olá, <span>{{ $name }}</span>! <br><br> Você foi cadastrado no sistema <span>{{$title}}</span> no horário <span>{{ $time }}</span>. <br><br> Acesse o link abaixo para iniciar e cadastrar uma senha!</p>
     <hr>
-    <a href="{{ route('login.register', $token) }}">Acessar</a>
+    <a href="{{ $domain }}">Acessar</a>
   </div>
 </body>
 

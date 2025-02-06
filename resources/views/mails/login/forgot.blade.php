@@ -81,7 +81,7 @@
     <hr>
     <p>Olá, <span>{{ $name }}</span>! <br><br> Recebemos sua solicitação para redefinir sua senha no horário <span>{{ $time }}</span>. <br><br> Acesse o link abaixo para iniciar!</p>
     <hr>
-    <a href="{{ route('login.edit', $token) }}">Acessar</a>
+    <a href="{{ $domain }}">Acessar</a>
   </div>
 </body>
 

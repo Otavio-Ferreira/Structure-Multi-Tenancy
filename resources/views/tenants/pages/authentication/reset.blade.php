@@ -7,7 +7,7 @@
       <div class="text-center mb-4">
         <a href="." class="navbar-brand navbar-brand-autodark"><img src="./static/logo.svg" height="36" alt=""></a>
       </div>
-      <form class="card card-md bg-transparent shadow-none border-0" action="{{route('login.send')}}" method="post" autocomplete="off" novalidate>
+      <form class="card card-md bg-transparent shadow-none border-0" action="{{tenant_route_url('login/solicitar')}}" method="post" autocomplete="off" novalidate>
         @csrf
         <div class="card-body">
           <h2 class="card-title text-center mb-4">Esqueceu sua senha?</h2>
@@ -25,7 +25,7 @@
         </div>
       </form>
       <div class="text-center text-muted mt-3">
-        Esquecer, <a href="{{ route('login') }}">me envie de volta</a> para a página de login.
+        Esquecer, <a href="{{ tenant_route_url('login') }}">me envie de volta</a> para a página de login.
       </div>
     </div>
   </div>

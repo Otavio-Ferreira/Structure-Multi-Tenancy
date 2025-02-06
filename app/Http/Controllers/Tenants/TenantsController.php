@@ -88,7 +88,6 @@ class TenantsController extends Controller
                     "ver_dashboard"
                 ]);
 
-
                 $user = $this->usersRepository->setUserTenant($request);
                 $user->assignRole($role);
 
