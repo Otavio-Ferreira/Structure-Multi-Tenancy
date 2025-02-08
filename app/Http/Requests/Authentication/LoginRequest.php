@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests\Authentication;
 
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
 
-class ResetRequest extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,20 +26,19 @@ class ResetRequest extends FormRequest
     public function rules()
     {
         return [
-            "password" => "required|string|same:password_confirm",
-            "password_confirm" => "required|string|same:password"
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string',
         ];
     }
 
     public function messages()
     {
         return [
+            "email.required" => "É necessário inserir uma email.",
+            "email.email" => "É necessário inserir uma email válido.",
+            "email.exists" => "É necessário inserir uma email que exista.",
             "password.required" => "É necessário inserir uma senha.",
-            "password.string" => "É necessário inserir uma senha em texto.",
-            "password.same" => "As duas senhas precisam ser iguais.",
-            "password_confirm.required" => "É necessário inserir uma senha.",
-            "password_confirm.string" => "É necessário inserir uma senha em texto.",
-            "password_confirm.same" => "As duas senhas precisam ser iguais.",
+            "password.string" => "É necessário inserir uma senha válida.",
         ];
     }
 

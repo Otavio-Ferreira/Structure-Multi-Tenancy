@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Authentication;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class SendRequest extends FormRequest
 {
@@ -23,6 +25,7 @@ class SendRequest extends FormRequest
     {
         return [
             "email" => "required|email",
+            "route" => "required|url",
         ];
     }
 
@@ -31,6 +34,17 @@ class SendRequest extends FormRequest
         return [
             "email.required" => "É necessário inserir um email.",
             "email.email" => "É necessário inserir um email válido.",
+            "route.required" => "É necessário inserir uma rota de envio.",
+            "route.url" => "É necessário inserir uma rota válida.",
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'validate' => false,
+            'message' => 'Erro de validação.',
+            'errors' => $validator->errors()
+        ], 422));
     }
 }

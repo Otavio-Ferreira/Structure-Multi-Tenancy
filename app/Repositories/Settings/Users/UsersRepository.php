@@ -12,4 +12,8 @@ interface UsersRepository{
     public function delete($id) : void;
 
     public function setUserTenant(Request $request) :User;
+
+    public function getOneUser($id);
+
+    public function getAllUsers();
 }

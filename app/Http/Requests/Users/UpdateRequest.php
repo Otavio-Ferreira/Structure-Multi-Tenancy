@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Users;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class UpdateRequest extends FormRequest
 {
@@ -26,6 +28,7 @@ class UpdateRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'role' => 'required|exists:roles,name',
+            'status' => 'required|in:0,1'
         ];
     }
 
@@ -37,6 +40,17 @@ class UpdateRequest extends FormRequest
             "role.required" => "É necessário inserir um grupo de permissão.",
             "role.string" => "É necessário inserir um grupo de permissão válido.",
             'role.exists' => 'O grupo selecionada não é válido.',
+            'status.required' => 'O campo status é obrigatório.',
+            'status.in' => 'O campo status deve ser 0 ou 1.',
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'validate' => false,
+            'message' => 'Erro de validação.',
+            'errors' => $validator->errors()
+        ], 422));
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Users;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class StoreRequest extends FormRequest
 {
@@ -27,6 +29,7 @@ class StoreRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'role' => 'required|exists:roles,name',
+            "route" => "required|url",
         ];
     }
 
@@ -40,6 +43,17 @@ class StoreRequest extends FormRequest
             "role.required" => "É necessário inserir um grupo de permissão.",
             "role.string" => "É necessário inserir um grupo de permissão válido.",
             'role.exists' => 'O grupo selecionada não é válido.',
+            "route.required" => "É necessário inserir uma rota de envio.",
+            "route.url" => "É necessário inserir uma rota válida.",
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'validate' => false,
+            'message' => 'Erro de validação.',
+            'errors' => $validator->errors()
+        ], 422));
     }
 }

@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('apps', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
+            $table->string('controller');
+            $table->string('color');
+            $table->boolean('status');
             $table->timestamps();
         });
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Authentication;
 use App\Events\Autenticator\TokenCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\Autenticator;
+use App\Http\Requests\Authentication\LoginRequest;
 use App\Http\Requests\Authentication\ResetRequest;
 use App\Http\Requests\Authentication\SendRequest;
 use App\Models\Authentication\Tokens;
@@ -13,6 +14,7 @@ use App\Repositories\Authentication\LoginRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
@@ -28,22 +30,37 @@ class LoginController extends Controller
         return view('pages.authentication.index');
     }
 
-    public function store(Request $request)
+    public function store(LoginRequest $request)
     {
+        try {
+            $user = User::where('email', $request->email)->first();
 
-        $credentials = $request->only(['email', 'password']);
-
-        if (Auth::attempt($credentials)) {
-
-            if (Auth::user()->status == 1) {
-                return redirect()->route('home.index');
-            } else {
-                Auth::logout();
-                return back()->with("toast_error", "verifique se o email e senha foram digitados corretamente.")->withInput();
+            if (!$user || !Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    "validate" => false,
+                    "message" => "Credenciais inválidas."
+                ], 401);
             }
-        }
 
-        return back()->with("toast_error", "verifique se o email e senha foram digitados corretamente.")->withInput();
+            $token = $user->createToken('create_users_token')->plainTextToken;
+
+            return response()->json([
+                "validate" => true,
+                "message" => "Autenticação bem-sucedida.",
+                "token" => $token,
+                'token_type' => 'Bearer',
+                "user" => [
+                    "id" => $user->id,
+                    "name" => $user->name,
+                    "email" => $user->email
+                ]
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "validate" => false,
+                "message" => "Erro no servidor."
+            ], 500);
+        }
     }
 
     public function reset()
@@ -62,44 +79,59 @@ class LoginController extends Controller
 
     public function send(SendRequest $request)
     {
-        $user = User::where('email', $request->email)->first();
+        try {
+            $user = User::where('email', $request->email)->first();
 
-        if ($user) {
-            try {
-
+            if ($user) {
                 $data = $this->repository->createToken($user, "reset_password");
-                
+
                 TokenCreated::dispatch(
                     $data['name'],
                     $data['email'],
                     $data['time'],
                     $data['token'],
                     $data['title'],
-                    route('login.edit', $data['token']),
+                    $request->route . '/' . $data['token']
                 );
-
-                return redirect()->back()->with("toast_success", "Verifique a caixa de entrada do seu email.");
-            } catch (\Throwable $th) {
-                return redirect()->back()->with("toast_error", "Erro ao enviar o email, tente novamente em alguns instantes.")->withInput();
+                return response()->json([
+                    "validate" => true,
+                    "message" => "Solicitação de email bem-sucedida.",
+                ], 200);
+            } else {
+                return response()->json([
+                    "validate" => false,
+                    "message" => "Credenciais inválidas."
+                ], 401);
             }
+        } catch (\Throwable $th) {
+            return response()->json([
+                "validate" => false,
+                "message" => "Erro no servidor."
+            ], 500);
         }
-
-        return redirect()->back()->with("toast_warning", "Erro ao enviar o email. Verifique se o email digitado está correto.")->withInput();
     }
 
     public function update(ResetRequest $request, Tokens $token)
     {
-        if (isset($token) && $token->status == 1) {
-            try {
+        try {
+            if (isset($token) && $token->status == 1) {
                 $this->repository->changePassword($request, $token);
-
-                return to_route('login')->with("toast_success", "Senha atualizada, tente fazer login.");
-            } catch (\Throwable $th) {
-                return redirect()->back()->with("toast_error", "Erro, tente novamente em alguns instantes.")->withInput();
+                return response()->json([
+                    "validate" => true,
+                    "message" => "Mudança de senha bem-sucedida.",
+                ], 200);
+            } else {
+                return response()->json([
+                    "validate" => false,
+                    "message" => "As duas senhas precisam ser iguais."
+                ], 401);
             }
+        } catch (\Throwable $th) {
+            return response()->json([
+                "validate" => false,
+                "message" => "Erro no servidor."
+            ], 500);
         }
-
-        return redirect()->back()->with("toast_error", "Error ao tentar alterar senha, tente novamente em alguns instantes.")->withInput();
     }
 
     public function register(Tokens $token)

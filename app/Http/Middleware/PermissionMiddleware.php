@@ -10,17 +10,23 @@ class PermissionMiddleware
     public function handle($request, Closure $next, ...$permissions)
     {
         if (Auth::check()) {
-            if (Auth::user()->can($permissions)) {
-                return $next($request);
+            foreach ($permissions as $permission) {
+                if (!Auth::user()->can($permission)) {
+                    return response()->json([
+                        'validate' => false,
+                        'message' => 'Usuário não possui permissão para essa ação.',
+                    ], 403);
+                }
             }
-            else{
-                return redirect()->back()->with("message", [
-                    "type" => "warning",
-                    "text" => "Página não encontrada!",
-                ]);
-            }
+    
+            return $next($request);
         }
+    
+        return response()->json([
+            'validate' => false,
+            'message' => 'Usuário não autenticado.',
+        ], 401);
 
-        return redirect()->back();
+        return $next($request);
     }
 }

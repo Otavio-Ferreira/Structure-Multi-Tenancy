@@ -28,44 +28,49 @@ class UsersController extends Controller
         $this->loginRepository = $loginRepository;
     }
 
-    public function index()
+    public function getOneUser($id)
     {
-
-        $this->data['users'] = User::all();
-        $this->data['roles'] = Role::all();
-
-        return view('pages.users.index')->with($this->data);
+        return $this->usersRepository->getOneUser($id);
     }
 
-    public function store(StoreRequest $request)
+    public function getAllUsers()
+    {
+        return $this->usersRepository->getAllUsers();
+    }
+
+    public function setUser(StoreRequest $request)
     {
         try {
-            
             $user = $this->usersRepository->set($request);
             $this->rolesRepository->set($user, $request);
-
             $data = $this->loginRepository->createToken($user, "first_access");
 
-            $domain = tenant() ? tenant_route_url('login/registrar/' .$data['token']) : route('login.register', $data['token']) ;
             UserCreated::dispatch(
                 $data['name'],
                 $data['email'],
                 $data['time'],
                 $data['token'],
                 $data['title'],
-                $domain,
+                $request->route . '/' . $data['token']
             );
 
-            return redirect()->back()->with("toast_success", "Usuário inserido, peça-o para verificar o email para cadastrar uma senha.");
+            return response()->json([
+                "validate" => true,
+                "message" => "Usuário criado com sucesso.",
+                "user" => $user
+            ], 201);
         } catch (\Throwable $th) {
-            return redirect()->back()->with("toast_error", "Erro ao inserir usuário, tente novamente em alguns instantes.");
+            return response()->json([
+                "validate" => false,
+                "message" => "Erro no servidor."
+            ], 500);
         }
     }
 
     public function update(UpdateRequest $request, $id)
     {
         try {
-            $user = User::findOrFail($id);
+            $user = User::find($id);
 
             $user->name = $request->name;
             $user->status = $request->status;
@@ -76,9 +81,16 @@ class UsersController extends Controller
                 $user->syncRoles([$request->role]);
             }
 
-            return redirect()->back()->with('toast_success', 'Usuário atualizado com sucesso.');
+            return response()->json([
+                "validate" => true,
+                "message" => "Usuário atualizado com sucesso.",
+                "user" => $user
+            ], 200);
         } catch (\Throwable $th) {
-            return redirect()->back()->with('toast_error', 'Erro ao atualizar usuário, tente novamente em alguns instantes');
+            return response()->json([
+                "validate" => false,
+                "message" => "Erro no servidor."
+            ], 500);
         }
     }
 
@@ -86,15 +98,34 @@ class UsersController extends Controller
     {
         try {
             $this->usersRepository->delete($id);
-            return redirect()->back()->with('toast_success', 'Registro removido com sucesso.');
+            return response()->json([
+                "validate" => true,
+                "message" => "Usuário deletado com sucesso."
+            ], 200);
         } catch (\Throwable $th) {
-            return redirect()->back()->with('toast_error', 'Registro não encontrado.');
+            return response()->json([
+                "validate" => false,
+                "message" => "Erro no servidor."
+            ], 500);
         }
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        Auth::logout();
-        return tenant() ? redirect()->to(tenant_route_url('login')) : to_route('login');
+        dd($request->user()); 
+        try {
+            $request->user()->tokens->each(function ($token) {
+                $token->delete();
+            });
+
+            return response()->json([
+                'message' => 'Logout realizado com sucesso.'
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "validate" => false,
+                "message" => "Erro no servidor."
+            ], 500);
+        }
     }
 }
