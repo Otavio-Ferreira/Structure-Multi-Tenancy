@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\Apps\AppsController;
+use App\Http\Controllers\Apps\TenantsAppsController;
 use App\Http\Controllers\Authentication\LoginController;
+use App\Http\Controllers\Settings\RolesController;
 use App\Http\Controllers\Settings\UsersController;
 use App\Models\Tenants\TenantApps;
 use App\Models\User;
@@ -21,57 +24,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::get('getApps', function (Request $request) {
-    $apps = TenantApps::where("tenants_id", $request->tenants_id)->get();
-    return response()->json($apps);
-});
-
-Route::post('login', function (Request $request) {
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required|string|min:6',
-    ]);
-
-    $credentials = $request->only(['email', 'password']);
-
-    if (Auth::attempt($credentials)) {
-        $user = Auth::user();
-
-        if ($user->status == 1) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Login realizado com sucesso.',
-                'data' => [
-                    'user' => $user,
-                    // 'token' => $user->createToken('authToken')->plainTextToken, // Gerar token se você estiver usando Sanctum ou Passport
-                ],
-            ], 200);
-        } else {
-            Auth::logout();
-            return response()->json([
-                'success' => false,
-                'message' => 'Usuário inativo. Verifique com o administrador.',
-            ], 403);
-        }
-    }
-
-    return response()->json([
-        'success' => false,
-        'message' => 'Credenciais inválidas. Verifique o email e senha.',
-    ], 401);
-});
-
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 foreach (config('tenancy.central_domains') as $domain) {
     Route::domain($domain)->group(function () {
 
         Route::post('login/enviar', [LoginController::class, 'store']);
         Route::post('login/solicitar', [LoginController::class, 'send']);
-        Route::patch('login/atualizar/{token}', [LoginController::class, 'update'])->name('login.update');
+        Route::patch('login/atualizar/{token}', [LoginController::class, 'update']);
 
         Route::middleware('auth:sanctum')->group(function () {
             Route::group(['middleware' => ['permission:adicionar_usuário']], function () {
@@ -81,6 +43,20 @@ foreach (config('tenancy.central_domains') as $domain) {
                 Route::post('users/updateUser/{id}', [UsersController::class, 'update']);
                 Route::delete('users/destroyUser/{id}', [UsersController::class, 'destroy']);
             });
+            Route::group(['middleware' => ['auth', 'permission:adicionar_grupo']], function () {
+                Route::get('roles/getRole/{id}', [RolesController::class, 'getRole']);
+                Route::get('roles/getAllRoles', [RolesController::class, 'getAllRoles']);
+                Route::post('roles/setRole', [RolesController::class, 'store']);
+                Route::patch('roles/updateRole/{id}', [RolesController::class, 'update']);
+            });
+            Route::group(['middleware' => ['auth', 'permission:adicionar_apps']], function () {
+                Route::get('app/getApp/{id}', [AppsController::class, 'getApp']);
+                Route::get('app/getApps', [AppsController::class, 'getApps']);
+                Route::post('app/setApp', [AppsController::class, 'setApp']);
+                Route::patch('app/updateApp/{id}', [AppsController::class, 'updateApp']);
+                // Route::post('app/setAppsToTenant', [TenantsAppsController::class, 'setAppsToTenant']);
+            });
+            Route::delete('users/logout', [UsersController::class, 'logout']);
         });
         // Route::middleware(Authenticate::class)->group(function () {
 
@@ -109,7 +85,6 @@ foreach (config('tenancy.central_domains') as $domain) {
         //     Route::delete('usuarios/deletar/{id}', [UsersController::class, 'destroy'])->name('users.destroy');
         // });
 
-        Route::delete('users/logout', [UsersController::class, 'logout']);
         // });
     });
 }

@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,10 +26,7 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string',
-            'controller' => 'required|string',
-            'color' => 'required|string',
-            'status' => 'required|in:0,1',
+            'name' => 'required|string|max:255',
         ];
     }
 
@@ -38,12 +35,6 @@ class StoreRequest extends FormRequest
         return [
             "name.required" => "É necessário inserir uma nome.",
             "name.string" => "É necessário inserir um nome em texto.",
-            "controlle.required" => "É necessário inserir uma nome do controller.",
-            "controlle.string" => "É necessário inserir um nome do controller em texto.",
-            "color.required" => "É necessário inserir uma cor.",
-            "color.string" => "É necessário inserir uma cor.",
-            "status.required" => "É necessário inserir uma status.",
-            "status.in" => "É necessário inserir um status válido.",
         ];
     }
 

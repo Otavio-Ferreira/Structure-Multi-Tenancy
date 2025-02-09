@@ -9,54 +9,15 @@ use Illuminate\Support\Facades\DB;
 
 class EloquentUsersRepository implements UsersRepository
 {
-    // protected $connection;
-
-    // public function setConnection($connection)
-    // {
-    //     $this->connection = $connection;
-    //     return $this;
-    // }
 
     public function getOneUser($id)
     {
-        try {
-            $user = User::find($id);
-            if (!$user) {
-                return response()->json([
-                    "validate" => false,
-                    "message" => "Esse usuário não existe."
-                ], 204);
-            }
-
-            return response()->json([
-                "validate" => true,
-                "message" => "Esse usuário existe.",
-                "user" => $user
-            ], 200);
-        } catch (\Throwable $th) {
-            return response()->json([
-                "validate" => false,
-                "message" => "Erro no servidor."
-            ], 500);
-        }
+        return User::find($id);
     }
 
     public function getAllUsers()
     {
-        try {
-            $users = User::all();
-
-            return response()->json([
-                "validate" => true,
-                "message" => "Busca bem-sucedida.",
-                "users" => $users
-            ], 200);
-        } catch (\Throwable $th) {
-            return response()->json([
-                "validate" => false,
-                "message" => "Erro no servidor."
-            ], 500);
-        }
+        return User::all();
     }
 
     public function set(StoreRequest $request): User
@@ -83,10 +44,6 @@ class EloquentUsersRepository implements UsersRepository
                 "status" => 0,
             ]);
 
-            // if ($this->connection) {
-            //     DB::setDefaultConnection('mysql');
-            // }
-
             return $user;
         });
 
@@ -96,7 +53,7 @@ class EloquentUsersRepository implements UsersRepository
     public function delete($id): void
     {
         DB::transaction(function () use ($id) {
-            $register = User::find($id);
+            $register = $this->getOneUser($id);
             $register->delete();
         });
     }

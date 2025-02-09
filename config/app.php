@@ -172,6 +172,7 @@ return [
         App\Providers\Authentication\LoginRepositoryProvider::class,
         App\Providers\Settings\Roles\RolesRepositoryProvider::class,
         App\Providers\Settings\Users\UsersRepositoryProvider::class,
+        App\Providers\Apps\AppsRepositoryProvider::class,
         App\Providers\TenancyServiceProvider::class
 
     ])->toArray(),

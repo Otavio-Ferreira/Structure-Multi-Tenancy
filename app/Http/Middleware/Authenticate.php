@@ -12,9 +12,19 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
-        return $request->expectsJson() ? null : response()->json([
-            'message' => 'Não autenticado.',
-        ], 401);
+        if (!$request->header('Authorization')) {
+            return response()->json([
+                'message' => 'Token de autenticação ausente.',
+            ], 401);
+        }
+
+        if (!$request->user()) {
+            return response()->json([
+                'message' => 'Token inválido ou expirado.',
+            ], 401);
+        }
+
+        return null;
     }
 
 }

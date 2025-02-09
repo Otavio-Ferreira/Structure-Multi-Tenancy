@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Spatie;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class RoleRequest extends FormRequest
 {
@@ -34,5 +36,14 @@ class RoleRequest extends FormRequest
             "name.required" => "É necessário inserir um nome.",
             "name.string" => "É necessário inserir um nome válido."
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'validate' => false,
+            'message' => 'Erro de validação.',
+            'errors' => $validator->errors()
+        ], 422));
     }
 }
