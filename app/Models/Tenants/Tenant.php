@@ -17,7 +17,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 {
     use HasDatabase, HasDomains, HasUuids;
 
-    // protected $fillable = ["name", "tenancy_db_name", "tenancy_db_user", "tenancy_db_password", "tenancy_db_port", "tenancy_db_host", "data"];
+    protected $fillable = ["name", "tenancy_db_name", "tenancy_db_user", "tenancy_db_password", "tenancy_db_port", "tenancy_db_host", "data"];
     protected $table = 'tenants';
 
     public function domain() : HasOne

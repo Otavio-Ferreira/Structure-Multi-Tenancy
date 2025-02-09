@@ -26,7 +26,8 @@ class RoleRequest extends FormRequest
     public function rules()
     {
         return [
-            "name" => 'required|string'
+            "name" => 'required|string',
+            "guard_name" => 'required|string'
         ];
     }
 
@@ -34,7 +35,9 @@ class RoleRequest extends FormRequest
     {
         return [
             "name.required" => "É necessário inserir um nome.",
-            "name.string" => "É necessário inserir um nome válido."
+            "name.string" => "É necessário inserir um nome válido.",
+            "guard_name.required" => "É necessário inserir um nome do guarda.",
+            "guard_name.string" => "É necessário inserir um nome do guarda válido."
         ];
     }
 

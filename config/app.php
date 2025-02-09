@@ -173,6 +173,7 @@ return [
         App\Providers\Settings\Roles\RolesRepositoryProvider::class,
         App\Providers\Settings\Users\UsersRepositoryProvider::class,
         App\Providers\Apps\AppsRepositoryProvider::class,
+        App\Providers\Tenants\Tenants\TenantsRepositoryProvider::class,
         App\Providers\TenancyServiceProvider::class
 
     ])->toArray(),

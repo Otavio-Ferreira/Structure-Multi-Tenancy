@@ -23,7 +23,7 @@ class EmailToSetPasswordTenants extends Mailable
         public readonly string $token,
         public readonly string $title,
         public readonly string $tenantId,
-        public readonly string $domain
+        public readonly string $domain,
     )
     {
         //

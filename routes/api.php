@@ -5,6 +5,7 @@ use App\Http\Controllers\Apps\TenantsAppsController;
 use App\Http\Controllers\Authentication\LoginController;
 use App\Http\Controllers\Settings\RolesController;
 use App\Http\Controllers\Settings\UsersController;
+use App\Http\Controllers\Tenants\TenantsController;
 use App\Models\Tenants\TenantApps;
 use App\Models\User;
 use Illuminate\Http\Client\ResponseSequence;
@@ -54,37 +55,20 @@ foreach (config('tenancy.central_domains') as $domain) {
                 Route::get('app/getApps', [AppsController::class, 'getApps']);
                 Route::post('app/setApp', [AppsController::class, 'setApp']);
                 Route::patch('app/updateApp/{id}', [AppsController::class, 'updateApp']);
-                // Route::post('app/setAppsToTenant', [TenantsAppsController::class, 'setAppsToTenant']);
             });
+
+            Route::group(['middleware' => ['auth', 'permission:adicionar_tenants']], function () {
+                Route::get('tenant/getTenant/{id}', [TenantsController::class, 'getTenant']);
+                Route::get('tenant/getTenants', [TenantsController::class, 'getTenants']);
+                Route::post('tenant/setTenant', [TenantsController::class, 'setTenant']);
+                Route::patch('tenant/updateTenant/{id}', [TenantsController::class, 'updateTenant']);
+                Route::delete('tenant/deleteTenant/{id}', [TenantsController::class, 'destroyTenant']);
+
+                // Route::post('app/setAppsToTenant', [TenantsAppsController::class, 'setAppsToTenant']);
+                // Route::post('app/atrelar', [TenantsAppsController::class, 'store'])->name('app.give');
+            });
+
             Route::delete('users/logout', [UsersController::class, 'logout']);
         });
-        // Route::middleware(Authenticate::class)->group(function () {
-
-        //     Route::post('app/cadastrar', [AppsController::class, 'store'])->name('app.store');
-
-        //     Route::post('app/atrelar', [TenantsAppsController::class, 'store'])->name('app.give');
-
-        //     Route::post('tenant/cadastrar', [TenantsController::class, 'store'])->name('tenant.store');
-
-        //     Route::group(['middleware' => ['auth', 'permission:adicionar_grupo']], function () {
-        //         Route::get('gupos', [RolesController::class, 'index'])->name('roles.index');
-        //         Route::post('grupos/adicionar', [RolesController::class, 'store'])->name('roles.store');
-        //         Route::post('grupos/atualizar/{id}', [RolesController::class, 'update'])->name('roles.update');
-        //     });
-
-        // Route::group(['middleware' => ['auth', 'permission:adicionar_permissões']], function () {
-        //     Route::get('permissoes', [PermissionsController::class, 'index'])->name('permissions.index');
-        //     Route::post('permissoes/adicionar', [PermissionsController::class, 'store'])->name('permissions.store');
-        //     Route::post('permissoes/atualizar/{id}', [PermissionsController::class, 'update'])->name('permissions.update');
-        // });
-
-        // Route::group(['middleware' => ['auth', 'permission:adicionar_usuário']], function () {
-        //     Route::get('usuarios', [UsersController::class, 'index'])->name('users.index');
-        //     Route::post('usuarios/adicionar', [UsersController::class, 'store'])->name('users.store');
-        //     Route::post('usuarios/atualizar/{id}', [UsersController::class, 'update'])->name('users.update');
-        //     Route::delete('usuarios/deletar/{id}', [UsersController::class, 'destroy'])->name('users.destroy');
-        // });
-
-        // });
     });
 }

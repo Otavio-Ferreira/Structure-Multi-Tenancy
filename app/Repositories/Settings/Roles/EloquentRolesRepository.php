@@ -33,7 +33,8 @@ class EloquentRolesRepository implements RolesRepository
     {
         $role = DB::transaction(function () use ($request) {
             $role = Role::create([
-                'name' => $request->name
+                'name' => $request->name,
+                'guard_name' => $request->guard_name,
             ]);
             $role->givePermissionTo([$request->permission_selected]);
             return $role;
