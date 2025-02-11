@@ -12,7 +12,7 @@ class Apps extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'controller', 'color', 'status'];
     protected $table = 'apps';
 
     public function tenants()

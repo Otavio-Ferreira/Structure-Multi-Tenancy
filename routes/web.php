@@ -50,11 +50,15 @@ foreach (config('tenancy.central_domains') as $domain) {
             Route::get('/dashboard', [HomeController::class, 'index'])->name('home.index');
             Route::post('/dashboard', [HomeController::class, 'index']);
 
-            Route::post('app/cadastrar', [AppsController::class, 'store'])->name('app.store');
+            Route::get('apps', [AppsController::class, 'index'])->name('apps.index');
+            Route::post('apps/cadastrar', [AppsController::class, 'setApp'])->name('apps.store');
+            Route::post('apps/atualizar/{id}', [AppsController::class, 'updateApp'])->name('apps.update');
 
             Route::post('app/atrelar', [TenantsAppsController::class, 'store'])->name('app.give');
-
             Route::post('tenant/cadastrar', [TenantsController::class, 'store'])->name('tenant.store');
+            Route::get('tenants', [TenantsController::class, 'index'])->name('tenant.index');
+            Route::post('tenants/atualizar/{id}', [TenantsController::class, 'updateTenant'])->name('tenant.update');
+            Route::delete('tenants/deletar/{id}', [TenantsController::class, 'destroyTenant'])->name('tenant.destroy');
 
             Route::group(['middleware' => ['auth', 'permission:adicionar_grupo']], function () {
                 Route::get('gupos', [RolesController::class, 'index'])->name('roles.index');

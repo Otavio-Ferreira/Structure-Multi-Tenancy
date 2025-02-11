@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 
 class Authenticate extends Middleware
@@ -14,4 +15,12 @@ class Authenticate extends Middleware
     {
         return $request->expectsJson() ? null : route('login');
     }
+
+    // protected function unauthenticated($request, array $guards)
+    // {
+    //     throw new HttpResponseException(response()->json([
+    //         'success' => false,
+    //         'error' => 'Não autenticado. Token inválido ou expirado.'
+    //     ], 401));
+    // }
 }

@@ -6,10 +6,13 @@ use App\Events\Autenticator\UserCreated;
 use App\Events\Tenants\TenantCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tenants\StoreRequest;
+use App\Http\Requests\Tenants\UpdateRequest;
+use App\Models\Apps\Apps;
 use App\Models\Tenants\Tenant;
 use App\Repositories\Authentication\LoginRepository;
 use App\Repositories\Settings\Roles\RolesRepository;
 use App\Repositories\Settings\Users\UsersRepository;
+use App\Services\Tenants\Tenants\TenantsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -23,13 +26,29 @@ class TenantsController extends Controller
     private $usersRepository;
     private $loginRepository;
     private $rolesRepository;
+    private $tenantsService;
 
-    public function __construct(UsersRepository $usersRepository, LoginRepository $loginRepository, RolesRepository $rolesRepository)
-    {
+    public function __construct(
+        UsersRepository $usersRepository,
+        LoginRepository $loginRepository,
+        RolesRepository $rolesRepository,
+        TenantsService $tenantsService
+    ) {
         $this->usersRepository = $usersRepository;
         $this->loginRepository = $loginRepository;
         $this->rolesRepository = $rolesRepository;
+        $this->tenantsService = $tenantsService;
     }
+
+    public function index()
+    {
+        $this->data['apps'] = Apps::all();
+        $this->data['roles'] = Role::all();
+        $this->data['tenants'] = Tenant::with("apps")->get();
+
+        return view('pages.tenants.index', $this->data);
+    }
+
     public function store(StoreRequest $request)
     {
         try {
@@ -118,5 +137,30 @@ class TenantsController extends Controller
         } catch (\Throwable $th) {
             return redirect()->back()->with("toast_error", "Erro ao cadastrar tenant!");
         }
+    }
+
+    public function destroyTenant($id)
+    {
+        return $this->tenantsService->destroyTenantResponse($id);
+    }
+
+    public function getTenant($id)
+    {
+        return $this->tenantsService->getTenantResponse($id);
+    }
+
+    public function getTenants()
+    {
+        return $this->tenantsService->getAllTenantsResponse();
+    }
+
+    public function setTenant(StoreRequest $request)
+    {
+        return $this->tenantsService->setTenantsResponse($request);
+    }
+
+    public function updateTenant(UpdateRequest $request, $id)
+    {
+        return $this->tenantsService->updateTenantsResponse($request, $id);
     }
 }

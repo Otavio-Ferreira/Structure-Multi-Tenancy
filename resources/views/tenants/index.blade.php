@@ -8,10 +8,10 @@
       <div class="row g-2 align-items-center">
         <div class="col">
           <div class="page-pretitle">
-            <a href="{{ route('home.index') }}">Dashboard</a>
+            <a href="{{ route('tenant.index') }}">Tenants</a>
           </div>
           <h2 class="page-title">
-            Dashboard
+            Tenants
           </h2>
         </div>
         <div class="col-auto ms-auto">
@@ -21,46 +21,8 @@
   </div>
   <div class="page-body">
     @can('ver_dashboard')
-      <div class="row">
-        <table class="table">
-            <thead>
-                <th>nome</th>
-                <th>email</th>
-            </thead>
-            <tbody>
-                @foreach ($users as $item)
-                    <tr>
-                        <td>{{$item->name}}</td>
-                        <td>{{$item->email}}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-        {{-- <div class="col-sm-12 col-md-6 p-2">
-          <div class="card">
-            <div class="card-header">
-              <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#add_app"
-                aria-controls="offcanvasExample">
-                Cadastrar App
-              </button>
-            </div>
-            <div class="card-body">
-              <table class="table">
-                <thead>
-                  <th>Nome</th>
-                </thead>
-                <tbody>
-                  @foreach ($apps as $item)
-                    <tr>
-                      <td>{{ $item->name }}</td>
-                    </tr>
-                  @endforeach
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-12 col-md-6 p-2">
+      <div class="">
+        <div class="p-2">
           <div class="card">
             <div class="card-header">
               <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#add_tenant"
@@ -75,6 +37,7 @@
                   <th>Dominio</th>
                   <th></th>
                   <th></th>
+                  {{-- <th>Dominio</th> --}}
                 </thead>
                 <tbody>
                   @foreach ($tenants as $item_t)
@@ -114,7 +77,7 @@
               </table>
             </div>
           </div>
-        </div> --}}
+        </div>
       </div>
     @endcan
   </div>
@@ -134,7 +97,7 @@
   </script>
 @endsection
 
-{{-- <div class="offcanvas offcanvas-start" tabindex="-1" id="add_app" aria-labelledby="offcanvasExampleLabel">
+<div class="offcanvas offcanvas-start" tabindex="-1" id="add_app" aria-labelledby="offcanvasExampleLabel">
   <div class="offcanvas-header">
     <h5 class="offcanvas-title" id="offcanvasExampleLabel">Cadastrar App</h5>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -195,7 +158,7 @@
             </label>
           </div>
         </div>
-      </div>
+      </div> --}}
 
       <div id="div" class="">
         @include('components.form-elements.input.input', [
@@ -264,14 +227,4 @@
       <button type="submit" class="btn btn-success">Enviar</button>
     </form>
   </div>
-</div> --}}
-
-
-{{-- - id
-- name
-- tenancy_db_name
-- tenancy_db_host
-- tenancy_db_user
-- tenancy_db_password
-- tenancy_db_port
-- domain --}}
+</div>

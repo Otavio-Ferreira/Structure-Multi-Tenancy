@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\Tenants\Authentication\LoginController;
 use App\Models\Tenants\TenantApps;
+use App\Models\User;
 use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,46 +20,86 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware([
+    InitializeTenancyByRequestData::class,
+])->group(function(){
+    Route::get('/identifyTenant', function(){
+        $user = User::all();
 
-Route::get('getApps', function (Request $request) {
-    $apps = TenantApps::where("tenants_id", $request->tenants_id)->get();
-    return response()->json($apps);
-});
-
-Route::post('login', function (Request $request) {
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required|string|min:6',
-    ]);
-
-    $credentials = $request->only(['email', 'password']);
-
-    if (Auth::attempt($credentials)) {
-        $user = Auth::user();
-
-        if ($user->status == 1) {
+        if($user){
             return response()->json([
                 'success' => true,
-                'message' => 'Login realizado com sucesso.',
-                'data' => [
-                    'user' => $user,
-                    // 'token' => $user->createToken('authToken')->plainTextToken, // Gerar token se você estiver usando Sanctum ou Passport
-                ],
+                'tenant' => $user
+            ]
+            );
+        }
+    });
+
+    Route::post('login', [LoginController::class, 'login']);
+    
+});
+
+
+Route::middleware(['api', 'identify.tenant.jwt'])->group(function () {
+
+    Route::get('/getUsers', function (Request $request) {
+        try {
+            $users = User::all();
+            return response()->json([
+                'success' => true,
+                'users' => $users
             ], 200);
-        } else {
-            Auth::logout();
+        } catch (\Throwable $th) {
             return response()->json([
                 'success' => false,
-                'message' => 'Usuário inativo. Verifique com o administrador.',
-            ], 403);
+                'error' => $th->getMessage()
+            ], 500);
         }
-    }
+    });
 
-    return response()->json([
-        'success' => false,
-        'message' => 'Credenciais inválidas. Verifique o email e senha.',
-    ], 401);
 });
+
+
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+// Route::get('getApps', function (Request $request) {
+//     $apps = TenantApps::where("tenants_id", $request->tenants_id)->get();
+//     return response()->json($apps);
+// });
+
+// Route::post('login', function (Request $request) {
+//     $request->validate([
+//         'email' => 'required|email',
+//         'password' => 'required|string|min:6',
+//     ]);
+
+//     $credentials = $request->only(['email', 'password']);
+
+//     if (Auth::attempt($credentials)) {
+//         $user = Auth::user();
+
+//         if ($user->status == 1) {
+//             return response()->json([
+//                 'success' => true,
+//                 'message' => 'Login realizado com sucesso.',
+//                 'data' => [
+//                     'user' => $user,
+//                     // 'token' => $user->createToken('authToken')->plainTextToken, // Gerar token se você estiver usando Sanctum ou Passport
+//                 ],
+//             ], 200);
+//         } else {
+//             Auth::logout();
+//             return response()->json([
+//                 'success' => false,
+//                 'message' => 'Usuário inativo. Verifique com o administrador.',
+//             ], 403);
+//         }
+//     }
+
+//     return response()->json([
+//         'success' => false,
+//         'message' => 'Credenciais inválidas. Verifique o email e senha.',
+//     ], 401);
+// });

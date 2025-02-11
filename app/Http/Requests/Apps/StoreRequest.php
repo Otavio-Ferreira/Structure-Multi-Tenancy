@@ -24,7 +24,10 @@ class StoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string',
+            'controller' => 'required|string',
+            'color' => 'required|string',
+            'status' => 'required|in:0,1',
         ];
     }
 
@@ -33,6 +36,12 @@ class StoreRequest extends FormRequest
         return [
             "name.required" => "É necessário inserir uma nome.",
             "name.string" => "É necessário inserir um nome em texto.",
+            "controller.required" => "É necessário inserir uma nome do controller.",
+            "controller.string" => "É necessário inserir um nome do controller em texto.",
+            "color.required" => "É necessário inserir uma cor.",
+            "color.string" => "É necessário inserir uma cor.",
+            "status.required" => "É necessário inserir uma status.",
+            "status.in" => "É necessário inserir um status válido.",
         ];
     }
 }
