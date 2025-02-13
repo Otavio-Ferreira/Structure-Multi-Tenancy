@@ -70,7 +70,7 @@ class UserService
         }
     }
 
-    public function setUserResponse(StoreRequest $request)
+    public function setUserResponse($request)
     {
         try {
             $user = $this->usersRepository->set($request);
@@ -94,7 +94,7 @@ class UserService
         }
     }
 
-    public function updateUserResponse(UpdateRequest $request, $id)
+    public function updateUserResponse($request, $id)
     {
         try {
             $user = $this->usersRepository->getOneUser($id);

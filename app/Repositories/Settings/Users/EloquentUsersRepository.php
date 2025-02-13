@@ -9,15 +9,18 @@ use Illuminate\Support\Facades\DB;
 
 class EloquentUsersRepository implements UsersRepository
 {
-    // protected $connection;
-
-    // public function setConnection($connection)
-    // {
-    //     $this->connection = $connection;
-    //     return $this;
-    // }
     
-    public function set(StoreRequest $request) : User
+    public function getOneUser($id)
+    {
+        return User::find($id);
+    }
+
+    public function getAllUsers()
+    {
+        return User::all();
+    }
+
+    public function set($request): User
     {
         $user = DB::transaction(function () use ($request) {
             $user = User::create([
@@ -32,7 +35,7 @@ class EloquentUsersRepository implements UsersRepository
         return $user;
     }
 
-    public function setUserTenant(Request $request) : User
+    public function setUserTenant(Request $request): User
     {
         $user = DB::transaction(function () use ($request) {
             $user = User::create([
@@ -41,20 +44,16 @@ class EloquentUsersRepository implements UsersRepository
                 "status" => 0,
             ]);
 
-            // if ($this->connection) {
-            //     DB::setDefaultConnection('mysql');
-            // }
-
             return $user;
         });
 
         return $user;
     }
 
-    public function delete($id) : void
+    public function delete($id): void
     {
         DB::transaction(function () use ($id) {
-            $register = User::find($id);
+            $register = $this->getOneUser($id);
             $register->delete();
         });
     }

@@ -57,7 +57,7 @@ class RolesService
         }
     }
 
-    public function setRoleToUserResponse(User $user, StoreRequest $request){
+    public function setRoleToUserResponse(User $user, $request){
         try {
             $this->rolesRepository->setRoleToUser($user, $request);
             return response()->json([
@@ -72,7 +72,7 @@ class RolesService
         }
     }
 
-    public function setRoleResponse(RoleRequest $request){
+    public function setRoleResponse($request){
         try {
             $role = $this->rolesRepository->setRole($request);
             return response()->json([
@@ -88,7 +88,7 @@ class RolesService
         }
     }
 
-    public function updateRoleResponseResponse(RoleRequest $request, $id){
+    public function updateRoleResponseResponse($request, $id){
         try {
             $role = $this->rolesRepository->updateRole($request, $id);
 

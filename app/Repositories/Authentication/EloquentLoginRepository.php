@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Authentication;
 
-use App\Http\Requests\Authentication\ResetRequest;
+use App\Http\Requests\Api\Authentication\ResetRequest;
 use App\Models\Authentication\Tokens;
 use App\Models\User;
 use App\Repositories\Authentication\LoginRepository;
@@ -31,6 +31,13 @@ class EloquentLoginRepository implements LoginRepository
             ];
 
             return $data;
+        });
+    }
+
+    public function invalidateToken(Tokens $token){
+        DB::transaction(function() use($token){
+            $token->status = 0;
+            $token->save();
         });
     }
 

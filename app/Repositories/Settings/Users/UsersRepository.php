@@ -7,9 +7,13 @@ use App\Models\User;
 use Illuminate\Http\Request;
 
 interface UsersRepository{
-    public function set(StoreRequest $request) : User;
+    public function set($request) : User;
 
     public function delete($id) : void;
 
     public function setUserTenant(Request $request) :User;
+
+    public function getOneUser($id);
+
+    public function getAllUsers();
 }

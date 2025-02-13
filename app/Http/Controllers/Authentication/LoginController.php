@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Authentication;
 use App\Events\Autenticator\TokenCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\Autenticator;
-use App\Http\Requests\Authentication\ResetRequest;
+use App\Http\Requests\Api\Authentication\ResetRequest;
 use App\Http\Requests\Authentication\SendRequest;
 use App\Models\Authentication\Tokens;
 use App\Models\User;
