@@ -127,14 +127,15 @@ class AppService
             $apps = Apps::whereIn("id", $tenants_apps)->get();
         
             return response()->json([
-                "validate" => true,
+                "success" => true,
                 "message" => "Busca bem-sucedida.",
                 "apps" => $apps
             ], 201);
         } catch (\Throwable $th) {
             return response()->json([
-                "validate" => false,
-                "message" => "Erro no servidor."
+                "success" => false,
+                "message" => "Erro no servidor.",
+                "errors" => $th->getMessage()
             ], 500);
         }
     }

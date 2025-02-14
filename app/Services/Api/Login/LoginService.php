@@ -28,7 +28,7 @@ class LoginService
 
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return response()->json([
-                    "validate" => false,
+                    "success" => false,
                     "message" => "Credenciais inválidas."
                 ], 401);
             }
@@ -36,20 +36,16 @@ class LoginService
             $token = $this->getToken($user);
 
             return response()->json([
-                "validate" => true,
+                "success" => true,
                 "message" => "Autenticação bem-sucedida.",
                 "token" => $token,
-                'token_type' => 'Bearer',
-                "user" => [
-                    "id" => $user->id,
-                    "name" => $user->name,
-                    "email" => $user->email
-                ]
+                'token_type' => 'Bearer'
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
-                "validate" => false,
-                "message" => "Erro no servidor."
+                "success" => false,
+                "message" => "Erro no servidor.",
+                "errors" => $th->getMessage()
             ], 500);
         }
     }
@@ -64,19 +60,20 @@ class LoginService
                 $this->dispatchTokenCreated($data, $request->route);
 
                 return response()->json([
-                    "validate" => true,
+                    "success" => true,
                     "message" => "Solicitação de email bem-sucedida.",
                 ], 200);
             } else {
                 return response()->json([
-                    "validate" => false,
+                    "success" => false,
                     "message" => "Credenciais inválidas."
                 ], 401);
             }
         } catch (\Throwable $th) {
             return response()->json([
-                "validate" => false,
-                "message" => "Erro no servidor."
+                "success" => false,
+                "message" => "Erro no servidor.",
+                "errors" => $th->getMessage()
             ], 500);
         }
     }
@@ -89,19 +86,20 @@ class LoginService
                 $this->repository->invalidateToken($token);
 
                 return response()->json([
-                    "validate" => true,
+                    "success" => true,
                     "message" => "Mudança de senha bem-sucedida.",
                 ], 200);
             } else {
                 return response()->json([
-                    "validate" => false,
+                    "success" => false,
                     "message" => "Token inválido."
                 ], 401);
             }
         } catch (\Throwable $th) {
             return response()->json([
-                "validate" => false,
-                "message" => "Erro no servidor."
+                "success" => false,
+                "message" => "Erro no servidor.",
+                "errors" => $th->getMessage()
             ], 500);
         }
     }

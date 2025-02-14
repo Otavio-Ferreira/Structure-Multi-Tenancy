@@ -31,10 +31,10 @@ Route::middleware([
 
     Route::post('login', [LoginController::class, 'login']);
     Route::post('login/enviar', [LoginController::class, 'send']);
+    Route::patch('/login/atualizar/{token}', [LoginController::class, 'reset']);
+    Route::patch('/login/registrar/{token}', [LoginController::class, 'register']);
 });
 
-Route::patch('login/atualizar/{token}', [LoginController::class, 'reset']);
-Route::patch('login/registrar/{token}', [LoginController::class, 'register']);
 
 // IDENTIFICA O TENANT PELO JWT
 
@@ -59,5 +59,5 @@ Route::middleware(['api', 'identify.tenant.jwt'])->group(function () {
 
 Route::middleware(['api'])->group(function () {
     Route::get('apps/todos', [AppsController::class, 'getApps']);
-    Route::get('apps/selecionar/{id}', [AppsController::class, 'getApp']);
+    Route::post('apps/atrelar', [AppsController::class, 'setAppToUser']);
 });

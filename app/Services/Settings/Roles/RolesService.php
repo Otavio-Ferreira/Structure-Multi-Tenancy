@@ -20,22 +20,24 @@ class RolesService
     public function getRoleResponse($id){
         try {
             $role = $this->rolesRepository->getOneRole($id);
+            
             if (!$role) {
                 return response()->json([
-                    "validate" => false,
-                    "message" => "Essa role não existe."
+                    "success" => false,
+                    "message" => "Esse grupo não existe."
                 ], 204);
             }
 
             return response()->json([
-                "validate" => true,
-                "message" => "Esse role existe.",
+                "success" => true,
+                "message" => "Esse grupo existe.",
                 "role" => $role
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
-                "validate" => false,
-                "message" => "Erro no servidor."
+                "success" => false,
+                "message" => "Erro no servidor.",
+                "errors" => $th->getMessage()
             ], 500);
         }
     }
@@ -45,14 +47,15 @@ class RolesService
             $roles = $this->rolesRepository->getAllRoles();
 
             return response()->json([
-                "validate" => true,
+                "success" => true,
                 "message" => "Busca bem-sucedida.",
                 "roles" => $roles
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
-                "validate" => false,
-                "message" => "Erro no servidor."
+                "success" => false,
+                "message" => "Erro no servidor.",
+                "errors" => $th->getMessage()
             ], 500);
         }
     }
@@ -61,13 +64,14 @@ class RolesService
         try {
             $this->rolesRepository->setRoleToUser($user, $request);
             return response()->json([
-                "validate" => true,
-                "message" => "Role adicionado ao usuário com sucesso."
+                "success" => true,
+                "message" => "Grupo adicionado ao usuário com sucesso."
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
-                "validate" => false,
-                "message" => "Erro no servidor."
+                "success" => false,
+                "message" => "Erro no servidor.",
+                "errors" => $th->getMessage()
             ], 500);
         }
     }
@@ -76,14 +80,15 @@ class RolesService
         try {
             $role = $this->rolesRepository->setRole($request);
             return response()->json([
-                "validate" => true,
-                "message" => "Role criada com sucesso.",
+                "success" => true,
+                "message" => "Grupo criada com sucesso.",
                 "role" => $role
             ], 201);
         } catch (\Throwable $th) {
             return response()->json([
-                "validate" => false,
-                "message" => "Erro no servidor."
+                "success" => false,
+                "message" => "Erro no servidor.",
+                "errors" => $th->getMessage()
             ], 500);
         }
     }
@@ -93,14 +98,15 @@ class RolesService
             $role = $this->rolesRepository->updateRole($request, $id);
 
             return response()->json([
-                "validate" => true,
-                "message" => "Role atualizada com sucesso.",
+                "success" => true,
+                "message" => "Grupo atualizado com sucesso.",
                 "role" => $role
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
-                "validate" => false,
-                "message" => "Erro no servidor."
+                "success" => false,
+                "message" => "Erro no servidor.",
+                "errors" => $th->getMessage()
             ], 500);
         }
     }
