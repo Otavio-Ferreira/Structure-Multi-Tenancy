@@ -86,8 +86,8 @@ class TenantsService
 
                 $tenant = $this->tenantsRepository->createTenant($request);
                 $tenant->domains()->create(['domain' => $request->domain . ".localhost"]);
-                $this->tenantsRepository->setDinamicTenantDatabase($tenant);
 
+                tenancy()->initialize($tenant->id);
 
                 $permissions = [
                     "1" => "adicionar_grupo",
@@ -121,7 +121,7 @@ class TenantsService
 
                 $this->dispatchTenantCreated($data, $tenant, $request->route);
 
-                $this->tenantsRepository->destroyDinamicTenantDatabase();
+                tenancy()->end($tenant->id);
 
                 return $tenant;
             });
