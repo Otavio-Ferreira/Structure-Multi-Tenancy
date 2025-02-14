@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Roles\RolesController;
+use App\Http\Controllers\Api\Tenants\Apps\AppsController;
 use App\Http\Controllers\Api\Tenants\Authentication\LoginController;
 use App\Http\Controllers\Api\Users\UsersController;
 use App\Models\Tenants\TenantApps;
@@ -26,14 +27,14 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
 
 Route::middleware([
     InitializeTenancyByRequestData::class,
-])->group(function(){
+])->group(function () {
 
     Route::post('login', [LoginController::class, 'login']);
     Route::post('login/enviar', [LoginController::class, 'send']);
-    Route::patch('login/atualizar/{token}', [LoginController::class, 'reset']);
-    Route::post('login/registrar/{token}', [LoginController::class, 'register']);
-    
 });
+
+Route::patch('login/atualizar/{token}', [LoginController::class, 'reset']);
+Route::patch('login/registrar/{token}', [LoginController::class, 'register']);
 
 // IDENTIFICA O TENANT PELO JWT
 
@@ -52,6 +53,11 @@ Route::middleware(['api', 'identify.tenant.jwt'])->group(function () {
         Route::get('grupos/todos', [RolesController::class, 'getAllRoles']);
         Route::post('grupos/adicionar', [RolesController::class, 'store']);
         Route::patch('grupos/atualizar/{id}', [RolesController::class, 'update']);
-    });
 
+    });
+});
+
+Route::middleware(['api'])->group(function () {
+    Route::get('apps/todos', [AppsController::class, 'getApps']);
+    Route::get('apps/selecionar/{id}', [AppsController::class, 'getApp']);
 });

@@ -4,16 +4,19 @@ namespace App\Services\Apps;
 
 use App\Http\Requests\Apps\StoreRequest;
 use App\Http\Requests\Apps\UpdateRequest;
+use App\Models\Apps\Apps;
+use App\Models\Tenants\TenantApps;
 use App\Repositories\Apps\AppsRepository;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
-class AppService{
+class AppService
+{
 
     protected $appsRepository;
 
     public function __construct(
         AppsRepository $appsRepository
-    )
-    {
+    ) {
         $this->appsRepository = $appsRepository;
     }
     public function getAppResponse($id)
@@ -109,4 +112,30 @@ class AppService{
         }
     }
 
+    public function getAllTennatsAppsResponse()
+    {
+        try {
+            $token = JWTAuth::parseToken();
+            $payload = $token->getPayload();
+            $tenantId = $payload->get('tenant_id') ?? null;
+            
+            if (!$tenantId) {
+                return response()->json(['error' => 'Tenant ID não encontrado no token'], 400);
+            }
+
+            $tenants_apps = TenantApps::where('tenants_id', $tenantId)->pluck('apps_id');
+            $apps = Apps::whereIn("id", $tenants_apps)->get();
+        
+            return response()->json([
+                "validate" => true,
+                "message" => "Busca bem-sucedida.",
+                "apps" => $apps
+            ], 201);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "validate" => false,
+                "message" => "Erro no servidor."
+            ], 500);
+        }
+    }
 }
